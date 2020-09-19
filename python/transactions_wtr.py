@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+"""
+Using the Database Helper functions we defined earlier, this file is for
+using our helpers to create a transaction table, and performing our database features
+involving the transaction table
+"""
+
 # Imports
 from db_helper import *
 
@@ -18,7 +24,7 @@ def init_Transactions_Table(connection):
 
 	execute_query(connection, create_transactions_table)
 
-# add a transaction based on a list of data provided by the user
+# Will add a transaction based on a list of data provided by the user
 def addTransaction(connection, transaction_data):
 	transaction_columns = ['Date', 'Count', 'Product_ID', 'Customer_Name']
 	insert_query(connection, 'Transactions', transaction_columns, transaction_data)
@@ -47,7 +53,7 @@ if __name__ == '__main__':
 	product_data = ['\'2020-07-18\'', '\'4\'', '\'1\'', '\'Chris McClure\'']
 	insert_query(connection, 'Transactions', product_columns, product_data)
 
-	# YAY! 
+	# YAY!
 	select_query = "SELECT * FROM Transactions INNER JOIN Products ON Transactions.Product_ID = Products.SKU_ID"
 	transactions = execute_read_query(connection, select_query)
 	printDB(connection, 'Transactions', select_query)

@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+"""
+Using the Database Helper functions we defined earlier, this file is for
+using our helpers to create a product, and performing our database features
+involving the product table
+"""
+
 #Imports
 from db_helper import *
 

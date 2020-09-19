@@ -8,17 +8,11 @@ PADX = (15, 15)
 PADY = (10, 10)
 
 # Methods
-# Create and place a table in 'where'
-def create_Table(where, row, column):
-	for r in range(row):
-		for c in range(column):
-			if r == 0:
-				b = Label(where, text="columns?")
-			else:
-				b = Label(where, text="test")
-			b.grid(row=r, column=c, padx = 10, pady = 0)
+# Create and place a table using a TreeView tkinter widget
+def create_Table(where, row = 4, column = 4):
+	treeV = Treeview(where, selectmode = "extended", height = row, columns = column,)
 
-
+	return treeV # so it can be placed outside of function
 # Creates main window of the app
 root = Tk()
 root.title("wtrApplication")
@@ -41,22 +35,12 @@ switchButton = Button(titleFrame, text="Switch Screens")
 switchButton.grid(columnspan=4, row=1, column=0, padx = PADX, pady = PADY)
 
 # Create a frame for the table
-tableFrame = Frame(root)
+tableFrame = Frame(mainFrame)
 tableFrame.grid(row=1, column=0)
 
-# RELEVANT TABLE ELEMENTS
-#create_Table(tableFrame, 4, 4)
-
-# TODO: at this point you would have the database return a format in the array or something similar
-elements = ["C", "C++", "Java", "C#"]
-
-# Choosing selectmode as multiple for selecting multiple options
-list_box = Listbox(root, selectmode ="multiple", height=len(elements))
-list_box.grid(row=1, column=0)
-
-
-for each_item in range(len(elements)):
-	list_box.insert(END, elements[each_item])
+# TODO: Create your table using TreeView
+treeVMain = create_Table(tableFrame)
+treeVMain.grid()
 
 
 # Addition Transaction Buttons
