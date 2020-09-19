@@ -21,39 +21,39 @@ root.title("wtrApplication")
 # GUI INITIALIZATION
 # The frame that other frames will be attached to
 mainFrame = Frame(root)
-mainFrame.grid(row=0, column=0)
+mainFrame.pack()
 
 # Title of the screen + Switch Button
 titleFrame = Frame(mainFrame)
-titleFrame.grid(row=0, column=0, rowspan=2)
+titleFrame.pack()
 
 transLabel = Label(titleFrame, text="Transaction Record")
-transLabel.grid(columnspan=4, row = 0, column = 0, padx = PADX, pady = PADY)
+transLabel.pack()
 
 # Packing elements into the grid
 switchButton = Button(titleFrame, text="Switch Screens")
-switchButton.grid(columnspan=4, row=1, column=0, padx = PADX, pady = PADY)
+switchButton.pack()
 
 # Create a frame for the table
 tableFrame = Frame(mainFrame)
-tableFrame.grid(row=1, column=0)
+tableFrame.pack()
 
 # TODO: Create your table using TreeView
 treeVMain = create_Table(tableFrame)
-treeVMain.grid()
+treeVMain.pack()
 
 
 # Addition Transaction Buttons
-addTransBut = Button(tableFrame, text="Add Transaction").grid(row=5, column=0, padx = PADX, pady = PADY)
-addTransLabel = Label(tableFrame, text="Add a Transaction Line to the record").grid(row=5, column=1, padx = PADX, pady = PADY)
+addTransBut = Button(tableFrame, text="Add Transaction").pack()
+addTransLabel = Label(tableFrame, text="Add a Transaction Line to the record").pack()
 
 # Edit Transaction Line Buttons
-editTransBut = Button(tableFrame, text="Edit Transaction").grid(row=6, column=0)
-editTransLabel = Label(tableFrame, text="Select a Transaction Line to Edit").grid(row=6, column=1, padx = PADX, pady = PADY)
+editTransBut = Button(tableFrame, text="Edit Transaction").pack()
+editTransLabel = Label(tableFrame, text="Select a Transaction Line to Edit").pack()
 
 # Remove Transaction Line Buttons
-remTransBut = Button(tableFrame, text="Remove Transaction").grid(row=5, column=2, padx = PADX, pady = PADY)
-remTransLabel = Label(tableFrame, text="Remove a Transaction Line from the record").grid(row=5, column=3, padx = PADX, pady = PADY)
+remTransBut = Button(tableFrame, text="Remove Transaction").pack()
+remTransLabel = Label(tableFrame, text="Remove a Transaction Line from the record").pack()
 
 
 root.mainloop()
