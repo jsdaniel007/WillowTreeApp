@@ -1,111 +1,103 @@
 #!/usr/bin/env python
 
 from tkinter import *
-from tkinter.ttk import *
+from tkinter import ttk # for treeview
+#Global Padding vars
+TITLE_PAD_Y = 10
 
-#Global Vars
-PADX = (15, 15)
-PADY = (10, 10)
+# Table Padding
+TABLE_PAD_Y = 100
+
+#
+BOTTOM_S_FRAME_Y = 50
+
+# Button Padding for individual elements
+BUTTON_PAD_Y = 30
+BUTTON_PAD_X = 50
+
+# Label Padding for individual elements
+LABEL_PAD_Y = 30
+LABEL_PAD_X = 50
 
 # Methods
-# Create and place a table using a TreeView tkinter widget
-def create_TreeView(where, row = 10, column = 3):
-	#TreeView Widget: w/ multiple select
-	treeV = Treeview(where, selectmode = 'extended', height = row, columns = column)
 
-	# Verticle Scroll Bar Widget
-	verscrlbar = Scrollbar(where, orient = 'vertical', command = treeV.yview)
-	verscrlbar.pack(side = 'right', fill = 'x')
-
-	#configure TreeView
-	treeV.configure(xscrollcommmand = verscrlbar.set)
-	# Define columns
-	treeV['columns'] = ("1", "2", "3")
-	# Define heading
-	treeV['show'] = 'headings'
-
-	# Assigning the width and anchor to  the
-	# respective columns
-	treeV.column("1", width = 90, anchor ='c')
-	treeV.column("2", width = 90, anchor ='se')
-	treeV.column("3", width = 90, anchor ='se')
-
-	# Assigning the heading names to the
-	# respective columns
-	treeV.heading("1", text ="Name")
-	treeV.heading("2", text ="Sex")
-	treeV.heading("3", text ="Age")
-
-	# Inserting the items and their features to the
-	# columns built
-	treeV.insert("", 'end', text ="L1",
-             values =("Nidhi", "F", "25"))
-	treeV.insert("", 'end', text ="L2",
-             values =("Nisha", "F", "23"))
-	treeV.insert("", 'end', text ="L3",
-             values =("Preeti", "F", "27"))
-	treeV.insert("", 'end', text ="L4",
-             values =("Rahul", "M", "20"))
-	treeV.insert("", 'end', text ="L5",
-             values =("Sonu", "F", "18"))
-	treeV.insert("", 'end', text ="L6",
-             values =("Rohit", "M", "19"))
-	treeV.insert("", 'end', text ="L7",
-             values =("Geeta", "F", "25"))
-	treeV.insert("", 'end', text ="L8",
-             values =("Ankit", "M", "22"))
-	treeV.insert("", 'end', text ="L10",
-             values =("Mukul", "F", "25"))
-	treeV.insert("", 'end', text ="L11",
-             values =("Mohit", "M", "16"))
-	treeV.insert("", 'end', text ="L12",
-             values =("Vivek", "M", "22"))
-	treeV.insert("", 'end', text ="L13",
-             values =("Suman", "F", "30"))
-
-	return treeV # so it can be placed outside of function
 
 # Creates main window of the app
 root = Tk()
 root.title("wtrApplication")
 #root.geometry('800x800')
 
-# GUI INITIALIZATION
-# The frame that other frames will be attached to
-mainFrame = Frame(root)
-mainFrame.pack()
 
+# TITLE SECTION -- app title/buttons
+# PROBLEM TRACKER -------
 # Title of the screen + Switch Button
-titleFrame = Frame(mainFrame)
-titleFrame.pack()
+titleFrame = LabelFrame(root, pady=TITLE_PAD_Y).pack()
 
-transLabel = Label(titleFrame, text="Transaction Record")
-transLabel.pack()
+transLabel = Label(titleFrame, text="Transaction Record").pack()
 
-# Packing elements into the grid
-switchButton = Button(titleFrame, text="Switch Screens")
-switchButton.pack()
+switchButton = Button(titleFrame, text="Switch Screens").pack()
+
+
+# TABLE SECTION -- TreeView to show data received from SQL query of database
+# PROBLEM TRACKER -------
+# TODO: Create your table using TreeView
+# TODO: Populate table from SQL query using JOINS, VIEWS
 
 # Create a frame for the table
-tableFrame = Frame(mainFrame)
-tableFrame.pack()
+tableFrame = LabelFrame(root, pady=TABLE_PAD_Y)
+tableFrame.pack(fill = BOTH)
 
-# TODO: Create your table using TreeView
-treeVMain = create_TreeView(tableFrame)
-#treeVMain.pack()
+#PROBLEM TRACKER -------
+#TODO:
+#TODO: fix sizing and find a better manner of padding
+my_tree = ttk.Treeview(tableFrame)
 
+# Column Definition + Formatting
+my_tree['columns'] = ("ex1", "ex2", "ex3")
+my_tree.column("#0", width=100, minwidth=50)
+my_tree.column("ex1", anchor=W, width=100)
+my_tree.column("ex2", anchor=CENTER, width=100)
+my_tree.column("ex3", anchor=W, width=100)
+
+#Column Labels basically
+my_tree.heading("#0", text="Phantom", anchor=W)
+my_tree.heading("ex1", text="example1", anchor=W)
+my_tree.heading("ex2", text="example2", anchor=CENTER)
+my_tree.heading("ex3", text="example3", anchor=W)
+
+# Add Data
+my_tree.insert(parent='', index='end', iid=0, text="Phantom",
+values=("John", 1, "Pepperoni"))
+my_tree.insert(parent='', index='end', iid=1, text="Phantom",
+values=("Johnny", 2, "Pepperoni"))
+my_tree.insert(parent='', index='end', iid=2, text="Phantom",
+values=("James", 3, "Pepperoni"))
+my_tree.insert(parent='', index='end', iid=3, text="Phantom",
+values=("Jackson", 4, "Pepperoni"))
+my_tree.insert(parent='', index='end', iid=4, text="Phantom",
+values=("Jameson", 5, "Pepperoni"))
+
+my_tree.pack(pady=20)
+
+
+# BOTTOM SECTION -- Action buttons with labels
+buttonFrame = LabelFrame(root, text="this is a frame", padx=LABEL_PAD_X, pady=BOTTOM_S_FRAME_Y)
+buttonFrame.pack(side="left", fill = BOTH, expand=True)
+
+labelFrame = LabelFrame(root, text="this is a frame", padx=LABEL_PAD_X, pady=BOTTOM_S_FRAME_Y)
+labelFrame.pack(side="right", fill = BOTH, expand=True)
 
 # Addition Transaction Buttons
-addTransBut = Button(tableFrame, text="Add Transaction").pack()
-addTransLabel = Label(tableFrame, text="Add a Transaction Line to the record").pack()
+addTransBut = Button(buttonFrame, text="Add Transaction").pack(side='top', padx=BUTTON_PAD_X, pady=BUTTON_PAD_Y)
+addTransLabel = Label(labelFrame, text="Add a Transaction Line to the record", pady=LABEL_PAD_Y).pack(side='top')
 
 # Edit Transaction Line Buttons
-editTransBut = Button(tableFrame, text="Edit Transaction").pack()
-editTransLabel = Label(tableFrame, text="Select a Transaction Line to Edit").pack()
+editTransBut = Button(buttonFrame, text="Edit Transaction").pack( padx=BUTTON_PAD_X, pady=BUTTON_PAD_Y)
+editTransLabel = Label(labelFrame, text="Select a Transaction Line to Edit", pady=LABEL_PAD_Y).pack()
 
 # Remove Transaction Line Buttons
-remTransBut = Button(tableFrame, text="Remove Transaction").pack()
-remTransLabel = Label(tableFrame, text="Remove a Transaction Line from the record").pack()
+remTransBut = Button(buttonFrame, text="Remove Transaction").pack(side='bottom', padx=BUTTON_PAD_X, pady=BUTTON_PAD_Y)
+remTransLabel = Label(labelFrame, text="Remove a Transaction Line from the record", pady=LABEL_PAD_Y).pack(side='bottom')
 
 
 root.mainloop()
