@@ -41,7 +41,7 @@ class mainScreen():
 		#Create 3 frames for the screen
 		self.headerFrame = LabelFrame(parent, pady=TITLE_PAD_Y).pack()
 		self.treeViewFrame = LabelFrame(parent, pady=TABLE_PAD_Y).pack()
-		self.controlPanelFrame = LabelFrame(parent).pack()
+		#self.controlPanelFrame = LabelFrame(parent).pack()
 
 		# Initialize the elements passed in
 
@@ -82,20 +82,21 @@ class TreeView():
 
 # Class for the control panel for TR and Inventory
 class ControlPanel():
-	def __init__(self, xPadding, yPadding, buttonsArr, labelArr):
-		self.buttonFrame = LabelFrame(self.controlPanelFrame, text="ButtonFrame", padx=xPadding, pady=yPadding)
-		self.buttonFrame.pack(side="left", fill = BOTH, expand=True)
-		self.labelFrame = LabelFrame(self.controlPanelFrame, text="LabelFrame", padx=xPadding, pady=yPadding)
-		self.labelFrame.pack(side="right", fill = BOTH, expand=True)
+	def __init__(self, parent, xPadding, yPadding, buttonTextArr, labelTextArr):
+		self.buttonFrame = tk.LabelFrame(parent, text="ButtonFrame", padx=xPadding, pady=yPadding)
+		self.buttonFrame.pack(side="left", fill = tk.BOTH, expand=True)
+		self.labelFrame = tk.LabelFrame(parent, text="LabelFrame", padx=xPadding, pady=yPadding)
+		self.labelFrame.pack(side="right", fill = tk.BOTH, expand=True)
 
 		#TODO: How will the GUI elements be defined?
 		# Pack the buttons into the button frame
-		for button in buttonsArr:
-			pass
+		for buttonText in buttonTextArr:
+			tk.Button(self.buttonFrame, text=buttonText, pady=LABEL_PAD_Y).pack()
 
 		# Pack the labels into the Label frame
-		for label in labelArr:
-			pass
+		for labelText in labelTextArr:
+			tk.Label(self.labelFrame, text=labelText, pady=LABEL_PAD_Y).pack()
+
 
 # Class to structure the main application
 # Note: args and kwargs are for accepting any number of Objects to init the app
@@ -113,8 +114,14 @@ class MainApplication(tk.Frame):
 		self.header.place('top')
 		self.treeView.dTree.pack(pady=20)
 
+		#Labels for GUI
+		buttonTextArr = ["Add Transaction", "Edit Transaction", "Remove Transaaction"]
+		labelTextArr = ["Add a Transaction Line to the Record", "Select a Transaction Line to Edit", "Remove a Transaction Line from the Record"]
+		self.controlPanel = ControlPanel(parent, LABEL_PAD_X, BOTTOM_S_FRAME_Y, buttonTextArr, labelTextArr)
+
 # Methods
 
+# Entry Point
 if __name__ == '__main__':
 	root = tk.Tk()
 	MainApplication(root).pack(side='top', fill='both', expand=True)
