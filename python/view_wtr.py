@@ -1,7 +1,20 @@
 #!/usr/bin/env python
 
-from tkinter import *
+import tkinter as tk
 from tkinter import ttk # for treeview
+
+# Description
+"""Branch: OOP-Refactor
+Purpose: To refactor application behavior to better model an OOP-based approach
+using https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
+Bryan Oakley's top response
+
+Milestones:
+Convert Init of application -- IN PROGRESS
+Convert new screen to a class
+Convert each major visual element into a class (titlebar, treeview, button control panel)
+"""
+
 #Global Padding vars
 TITLE_PAD_Y = 10
 
@@ -19,85 +32,97 @@ BUTTON_PAD_X = 50
 LABEL_PAD_Y = 30
 LABEL_PAD_X = 50
 
+# Classes -- For every major reusable GUI element, we'll have a class for it
+
+# Used as a template for the transaction record and inventory
+# 3 Sections: Header, Treeview, and Control Panel
+class mainScreen():
+	def __init__(self, parent, Header, TreeView, ControlPanel):
+		#Create 3 frames for the screen
+		self.headerFrame = LabelFrame(parent, pady=TITLE_PAD_Y).pack()
+		self.treeViewFrame = LabelFrame(parent, pady=TABLE_PAD_Y).pack()
+		#self.controlPanelFrame = LabelFrame(parent).pack()
+
+		# Initialize the elements passed in
+
+	pass
+
+# Class for the Header and Switch Screen Buttons
+class Header():
+	# Padding for Elements
+	XPadding = 10
+	YPadding = 10
+	def __init__(self, parent, headerTitle, buttonSwitchText):
+		self.headerTitle = tk.Label(parent, text = headerTitle)
+		self.switchButton = tk.Button(parent, text = buttonSwitchText)
+
+	# places
+	def place(self, whatSide):
+		self.headerTitle.pack(side=whatSide)
+		self.switchButton.pack(side=whatSide)
+
+# Class for the data in the treeview
+class TreeView():
+	def __init__(self, parent):
+		self.dTree = ttk.Treeview(parent)
+
+		# TODO: define columns based on SQL table results
+		self.dTree['columns'] = ("ex1", "ex2")
+
+		# TODO: Refactor Programmatically
+		self.dTree.column("#0", width=100, minwidth=50)
+		self.dTree.column("ex1", anchor = tk.W, width=100)
+		self.dTree.heading("#0", text="Phantom", anchor = tk.W)
+		self.dTree.heading("ex1", text="example1", anchor = tk.W)
+
+		self.dTree.insert(parent='', index='end', iid=0, text="Phantom",
+		values=("John", 1, "Pepperoni"))
+		self.dTree.insert(parent='', index='end', iid=1, text="Phantom",
+		values=("Johnny", 2, "Sausage"))
+
+# Class for the control panel for TR and Inventory
+class ControlPanel():
+	def __init__(self, parent, xPadding, yPadding, buttonTextArr, labelTextArr):
+		self.buttonFrame = tk.LabelFrame(parent, text="ButtonFrame", padx=xPadding, pady=yPadding)
+		self.buttonFrame.pack(side="left", fill = tk.BOTH, expand=True)
+		self.labelFrame = tk.LabelFrame(parent, text="LabelFrame", padx=xPadding, pady=yPadding)
+		self.labelFrame.pack(side="right", fill = tk.BOTH, expand=True)
+
+		#TODO: How will the GUI elements be defined?
+		# Pack the buttons into the button frame
+		for buttonText in buttonTextArr:
+			tk.Button(self.buttonFrame, text=buttonText, pady=LABEL_PAD_Y).pack()
+
+		# Pack the labels into the Label frame
+		for labelText in labelTextArr:
+			tk.Label(self.labelFrame, text=labelText, pady=LABEL_PAD_Y).pack()
+
+
+# Class to structure the main application
+# Note: args and kwargs are for accepting any number of Objects to init the app
+class MainApplication(tk.Frame):
+	# Using Instace attributes instead of class attributes
+	def __init__(self, parent, *args, **kwargs): # parent = root
+		tk.Frame.__init__(self, parent, *args, **kwargs)
+		self.parent = parent
+
+		# <args/kwargs are your gui classes being set here like self.parent>
+		self.header = Header(parent, "Transaction Record", "Switch Screens")
+		self.treeView = TreeView(parent)
+
+		# Now take your elements and pack them
+		self.header.place('top')
+		self.treeView.dTree.pack(pady=20)
+
+		#Labels for GUI
+		buttonTextArr = ["Add Transaction", "Edit Transaction", "Remove Transaaction"]
+		labelTextArr = ["Add a Transaction Line to the Record", "Select a Transaction Line to Edit", "Remove a Transaction Line from the Record"]
+		self.controlPanel = ControlPanel(parent, LABEL_PAD_X, BOTTOM_S_FRAME_Y, buttonTextArr, labelTextArr)
+
 # Methods
 
-
-# Creates main window of the app
-root = Tk()
-root.title("wtrApplication")
-#root.geometry('800x800')
-
-
-# TITLE SECTION -- app title/buttons
-# PROBLEM TRACKER -------
-# Title of the screen + Switch Button
-titleFrame = LabelFrame(root, pady=TITLE_PAD_Y).pack()
-
-transLabel = Label(titleFrame, text="Transaction Record").pack()
-
-switchButton = Button(titleFrame, text="Switch Screens").pack()
-
-
-# TABLE SECTION -- TreeView to show data received from SQL query of database
-# PROBLEM TRACKER -------
-# TODO: Create your table using TreeView
-# TODO: Populate table from SQL query using JOINS, VIEWS
-
-# Create a frame for the table
-tableFrame = LabelFrame(root, pady=TABLE_PAD_Y)
-tableFrame.pack(fill = BOTH)
-
-#PROBLEM TRACKER -------
-#TODO:
-#TODO: fix sizing and find a better manner of padding
-my_tree = ttk.Treeview(tableFrame)
-
-# Column Definition + Formatting
-my_tree['columns'] = ("ex1", "ex2", "ex3")
-my_tree.column("#0", width=100, minwidth=50)
-my_tree.column("ex1", anchor=W, width=100)
-my_tree.column("ex2", anchor=CENTER, width=100)
-my_tree.column("ex3", anchor=W, width=100)
-
-#Column Labels basically
-my_tree.heading("#0", text="Phantom", anchor=W)
-my_tree.heading("ex1", text="example1", anchor=W)
-my_tree.heading("ex2", text="example2", anchor=CENTER)
-my_tree.heading("ex3", text="example3", anchor=W)
-
-# Add Data
-my_tree.insert(parent='', index='end', iid=0, text="Phantom",
-values=("John", 1, "Pepperoni"))
-my_tree.insert(parent='', index='end', iid=1, text="Phantom",
-values=("Johnny", 2, "Pepperoni"))
-my_tree.insert(parent='', index='end', iid=2, text="Phantom",
-values=("James", 3, "Pepperoni"))
-my_tree.insert(parent='', index='end', iid=3, text="Phantom",
-values=("Jackson", 4, "Pepperoni"))
-my_tree.insert(parent='', index='end', iid=4, text="Phantom",
-values=("Jameson", 5, "Pepperoni"))
-
-my_tree.pack(pady=20)
-
-
-# BOTTOM SECTION -- Action buttons with labels
-buttonFrame = LabelFrame(root, text="this is a frame", padx=LABEL_PAD_X, pady=BOTTOM_S_FRAME_Y)
-buttonFrame.pack(side="left", fill = BOTH, expand=True)
-
-labelFrame = LabelFrame(root, text="this is a frame", padx=LABEL_PAD_X, pady=BOTTOM_S_FRAME_Y)
-labelFrame.pack(side="right", fill = BOTH, expand=True)
-
-# Addition Transaction Buttons
-addTransBut = Button(buttonFrame, text="Add Transaction").pack(side='top', padx=BUTTON_PAD_X, pady=BUTTON_PAD_Y)
-addTransLabel = Label(labelFrame, text="Add a Transaction Line to the record", pady=LABEL_PAD_Y).pack(side='top')
-
-# Edit Transaction Line Buttons
-editTransBut = Button(buttonFrame, text="Edit Transaction").pack( padx=BUTTON_PAD_X, pady=BUTTON_PAD_Y)
-editTransLabel = Label(labelFrame, text="Select a Transaction Line to Edit", pady=LABEL_PAD_Y).pack()
-
-# Remove Transaction Line Buttons
-remTransBut = Button(buttonFrame, text="Remove Transaction").pack(side='bottom', padx=BUTTON_PAD_X, pady=BUTTON_PAD_Y)
-remTransLabel = Label(labelFrame, text="Remove a Transaction Line from the record", pady=LABEL_PAD_Y).pack(side='bottom')
-
-
-root.mainloop()
+# Entry Point
+if __name__ == '__main__':
+	root = tk.Tk()
+	MainApplication(root).pack(side='top', fill='both', expand=True)
+	root.mainloop()
