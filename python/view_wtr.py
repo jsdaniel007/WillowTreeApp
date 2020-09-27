@@ -2,6 +2,8 @@
 
 import tkinter as tk
 from tkinter import ttk # for treeview
+import enum
+import sys
 
 # Description
 """Branch: OOP-Refactor
@@ -32,29 +34,87 @@ BUTTON_PAD_X = 50
 LABEL_PAD_Y = 30
 LABEL_PAD_X = 50
 
-# Classes -- For every major reusable GUI element, we'll have a class for it
+# Use enum ScreenID to denote what titles go in the main application
+HeaderText = ["Transaction Record", "Inventory Screen"]
+HeaderButText = ["Switch to Products", "Switch to TR"]
 
-# Used as a template for the transaction record and inventory
+TransLabelText = ["Add a Transaction Line to the Record", "Select a Transaction Line to Edit", "Remove a Transaction Line from the Record"]
+TransButtonText = ["Add Transaction", "Edit Transaction", "Remove Transaction"]
+
+ProdButtonText = ["Add Product", "Edit Product", "Remove Product"]
+ProdLabelText = ["Add a Product to the Inventory", "Select a Product to Edit", "Remove a Product from the Inventory"]
+
+# List for using the enum values to denote arrays
+SCREEN_TEXT = [
+	[TransButtonText, TransLabelText], # Transaction Record Screen Text List
+	[ProdButtonText, ProdLabelText] #Product Record Screen Text List
+]
+
+# Classes -- For every major reusable GUI element, we'll have a class for it
+class Screen(enum.IntEnum):
+	NONE = sys.maxsize
+	TRANSACTIONS = 0
+	PRODUCTS = 1
+
+# Used as a template for the TRANSACTIONS record and inventory
 # 3 Sections: Header, Treeview, and Control Panel
-class mainScreen():
-	def __init__(self, parent, Header, TreeView, ControlPanel):
+class MainScreen():
+	m_Screen_ID = Screen.NONE
+
+	#init EMPTY elements
+	def __init__(self, parent):
 		#Create 3 frames for the screen
-		self.headerFrame = LabelFrame(parent, pady=TITLE_PAD_Y).pack()
-		self.treeViewFrame = LabelFrame(parent, pady=TABLE_PAD_Y).pack()
-		#self.controlPanelFrame = LabelFrame(parent).pack()
+		self.headerFrame = tk.LabelFrame(parent, text="header", pady=TITLE_PAD_Y)
+		self.treeViewFrame = tk.LabelFrame(parent, text="treeview", pady=TABLE_PAD_Y)
+		self.controlPanelFrame = tk.LabelFrame(parent, text="control Panel",)
 
 		# Initialize the elements passed in
+		#self.header = Header(parent, "TRANSACTIONS Record", "Switch Screens")
+		self.header = Header(self.headerFrame)
+		self.treeView = TreeView(self.treeViewFrame)
+		self.controlPanel = ControlPanel(self.controlPanelFrame, LABEL_PAD_X, BOTTOM_S_FRAME_Y)
 
-	pass
+	def labelElements(self, screen_ID, cpButtonText, cpLabelText):
+		# ID Screen based on
+		self.m_Screen_ID = screen_ID
+
+		# Header text
+		# Use the enum types to declare what the screen should use
+		self.header.labelElements(HeaderText[screen_ID], HeaderButText[screen_ID])
+
+		# Treeview Text
+
+		# Control Panel Labeling
+		self.controlPanel.labelElements(SCREEN_TEXT[screen_ID][0], SCREEN_TEXT[screen_ID][0])
+
+	def show(self):
+		# Frame packing
+		self.headerFrame.pack()
+		self.treeViewFrame.pack()
+		self.controlPanelFrame.pack()
+
+		#Actual Element Packing
+		self.header.place('top')
+		self.treeView.dTree.pack(pady=20)
+		self.controlPanel.place()
+
 
 # Class for the Header and Switch Screen Buttons
 class Header():
 	# Padding for Elements
 	XPadding = 10
 	YPadding = 10
-	def __init__(self, parent, headerTitle, buttonSwitchText):
-		self.headerTitle = tk.Label(parent, text = headerTitle)
-		self.switchButton = tk.Button(parent, text = buttonSwitchText)
+	def __init__(self, parent):
+		self.headerTitle = tk.Label(parent)
+		self.switchButton = tk.Button(parent)
+
+	def labelElements(self, headerTitle, buttonTitle):
+		self.headerTitle['text'] = headerTitle
+		self.switchButton['text'] = buttonTitle
+
+	# generic, currently used for switchbutton
+	def addCommand(element, command):
+		element['command'] = command
 
 	# places
 	def place(self, whatSide):
@@ -82,21 +142,30 @@ class TreeView():
 
 # Class for the control panel for TR and Inventory
 class ControlPanel():
-	def __init__(self, parent, xPadding, yPadding, buttonTextArr, labelTextArr):
+	# Class contained for show() function
+	m_buttons = []
+	m_labels = []
+	def __init__(self, parent, xPadding, yPadding):
 		self.buttonFrame = tk.LabelFrame(parent, text="ButtonFrame", padx=xPadding, pady=yPadding)
 		self.buttonFrame.pack(side="left", fill = tk.BOTH, expand=True)
 		self.labelFrame = tk.LabelFrame(parent, text="LabelFrame", padx=xPadding, pady=yPadding)
 		self.labelFrame.pack(side="right", fill = tk.BOTH, expand=True)
 
-		#TODO: How will the GUI elements be defined?
-		# Pack the buttons into the button frame
+
+	def labelElements(self, buttonTextArr, labelTextArr):
 		for buttonText in buttonTextArr:
-			tk.Button(self.buttonFrame, text=buttonText, pady=LABEL_PAD_Y).pack()
+			self.m_buttons.append(tk.Button(self.buttonFrame, text=buttonText, pady=LABEL_PAD_Y))
 
 		# Pack the labels into the Label frame
 		for labelText in labelTextArr:
-			tk.Label(self.labelFrame, text=labelText, pady=LABEL_PAD_Y).pack()
+			self.m_labels.append(tk.Label(self.labelFrame, text=labelText, pady=LABEL_PAD_Y))
 
+	def place(self):
+		for button in self.m_buttons:
+			button.pack()
+
+		for label in self.m_labels:
+			label.pack()
 
 # Class to structure the main application
 # Note: args and kwargs are for accepting any number of Objects to init the app
@@ -106,20 +175,20 @@ class MainApplication(tk.Frame):
 		tk.Frame.__init__(self, parent, *args, **kwargs)
 		self.parent = parent
 
-		# <args/kwargs are your gui classes being set here like self.parent>
-		self.header = Header(parent, "Transaction Record", "Switch Screens")
-		self.treeView = TreeView(parent)
+		initScreen = MainScreen(parent)
 
-		# Now take your elements and pack them
-		self.header.place('top')
-		self.treeView.dTree.pack(pady=20)
+		# Give the TRANSACTIONS Screen Array to work with
+		initScreen.labelElements(Screen.TRANSACTIONS, SCREEN_TEXT[Screen.TRANSACTIONS][0], SCREEN_TEXT[Screen.TRANSACTIONS][1])
 
-		#Labels for GUI
-		buttonTextArr = ["Add Transaction", "Edit Transaction", "Remove Transaaction"]
-		labelTextArr = ["Add a Transaction Line to the Record", "Select a Transaction Line to Edit", "Remove a Transaction Line from the Record"]
-		self.controlPanel = ControlPanel(parent, LABEL_PAD_X, BOTTOM_S_FRAME_Y, buttonTextArr, labelTextArr)
 
-# Methods
+		initScreen.show()
+
+def switchScreen(mainScreen):
+	if mainScreen.m_Screen_ID == Screen.TRANSACTIONS:
+		mainScreen.labelElements(Screen.PRODUCTS, SCREEN_TEXT[Screen.PRODUCTS][0], SCREEN_TEXT[Screen.PRODUCTS][1])
+	elif mainScreen.m_Screen_ID == Screen.PRODUCTS:
+		mainScreen.labelElements(Screen.TRANSACTIONS, SCREEN_TEXT[Screen.TRANSACTIONS][0], SCREEN_TEXT[Screen.TRANSACTIONS][1])
+
 
 # Entry Point
 if __name__ == '__main__':
