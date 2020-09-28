@@ -2,6 +2,7 @@
 
 import tkinter as tk
 from tkinter import ttk # for treeview
+from functools import partial
 import enum
 import sys
 
@@ -66,7 +67,7 @@ class MainScreen():
 		#Create 3 frames for the screen
 		self.headerFrame = tk.LabelFrame(parent, text="header", pady=TITLE_PAD_Y)
 		self.treeViewFrame = tk.LabelFrame(parent, text="treeview", pady=TABLE_PAD_Y)
-		self.controlPanelFrame = tk.LabelFrame(parent, text="control Panel",)
+		self.controlPanelFrame = tk.LabelFrame(parent, text="control Panel")
 
 		# Initialize the elements passed in
 		#self.header = Header(parent, "TRANSACTIONS Record", "Switch Screens")
@@ -74,7 +75,7 @@ class MainScreen():
 		self.treeView = TreeView(self.treeViewFrame)
 		self.controlPanel = ControlPanel(self.controlPanelFrame, LABEL_PAD_X, BOTTOM_S_FRAME_Y)
 
-	def labelElements(self, screen_ID, cpButtonText, cpLabelText):
+	def labelElements(self, screen_ID):
 		# ID Screen based on
 		self.m_Screen_ID = screen_ID
 
@@ -86,6 +87,12 @@ class MainScreen():
 
 		# Control Panel Labeling
 		self.controlPanel.labelElements(SCREEN_TEXT[screen_ID][0], SCREEN_TEXT[screen_ID][0])
+
+	def switchScreen(self):
+		if self.m_Screen_ID == Screen.TRANSACTIONS:
+			self.labelElements(Screen.PRODUCTS)
+		elif self.m_Screen_ID == Screen.PRODUCTS:
+			self.labelElements(Screen.TRANSACTIONS)
 
 	def show(self):
 		# Frame packing
@@ -106,7 +113,7 @@ class Header():
 	YPadding = 10
 	def __init__(self, parent):
 		self.headerTitle = tk.Label(parent)
-		self.switchButton = tk.Button(parent)
+		self.switchButton = tk.Button(parent, command= partial(MainScreen.switchScreen, MainScreen) )
 
 	def labelElements(self, headerTitle, buttonTitle):
 		self.headerTitle['text'] = headerTitle
@@ -178,16 +185,12 @@ class MainApplication(tk.Frame):
 		initScreen = MainScreen(parent)
 
 		# Give the TRANSACTIONS Screen Array to work with
-		initScreen.labelElements(Screen.TRANSACTIONS, SCREEN_TEXT[Screen.TRANSACTIONS][0], SCREEN_TEXT[Screen.TRANSACTIONS][1])
+		initScreen.labelElements(Screen.TRANSACTIONS)
 
+		# Only way to switch screens
+		#initScreen.switchScreen()
 
 		initScreen.show()
-
-def switchScreen(mainScreen):
-	if mainScreen.m_Screen_ID == Screen.TRANSACTIONS:
-		mainScreen.labelElements(Screen.PRODUCTS, SCREEN_TEXT[Screen.PRODUCTS][0], SCREEN_TEXT[Screen.PRODUCTS][1])
-	elif mainScreen.m_Screen_ID == Screen.PRODUCTS:
-		mainScreen.labelElements(Screen.TRANSACTIONS, SCREEN_TEXT[Screen.TRANSACTIONS][0], SCREEN_TEXT[Screen.TRANSACTIONS][1])
 
 
 # Entry Point
