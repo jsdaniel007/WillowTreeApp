@@ -1,6 +1,7 @@
 # WillowTreeApp
 Purpose: Create an application to log transactions from an online storefront while keeping track of inventory changes from the transactions
 ![Database and Class Diagrams for Python Program](DB_Design_WillowTreeApp.png)
+
 Database Design Overview:
 Transactions Table- used for tracking Transaction Line Entries that will populate the TreeView with Tkinter in Python
 Product Table- used for tracking different types of products a seller may offer, with details such as name and quantity
