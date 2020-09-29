@@ -12,6 +12,7 @@ Purpose: Create an application to log transactions from an online storefront whi
 *Some features are possible through programming such as automatic quantity reduction, for one example
 
 **Class Diagrams for Python Code:**
+
 *MainApplication(tk.Frame):*(inherits from Tkinter.Frame) initializes the tkinter init of the application and first screen accessed
 
 *MainScreen():* A screen consists of a Header, TreeView, and ControlPanel Objects to create multiple GUI Screens displaying, also holding a screen ID to identify through enum's what the screen is
