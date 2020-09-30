@@ -40,8 +40,11 @@ LABEL_PAD_X = 50
 class ScreenID(enum.IntEnum):
 	NONE = sys.maxsize
 	TRANSACTIONS = 0
-	PRODUCTS = 1
+	TRANS_ENTRY = 1
+	PRODUCTS = 2
+	PRODUCT_ENTRY = 3
 
+# Base Classes
 # An abstract class acting as an interface for different GUI screens to derive from
 class Screen(tk.Frame):
 	m_Screen_ID = ScreenID.NONE
@@ -75,7 +78,37 @@ class Screen(tk.Frame):
 		self.m_DataView.dTree.pack(pady=20)
 		self.m_ControlPanel.show()
 
+# Base Class for accepting form style data
+class dataEntryScreen(Screen):
+	m_labels = []
+	m_entries = []
+	def __init__(self, parent, labels, buttons):
+		self.m_BackButton = tk.Button(parent)
+		self.m_labels = labels.copy()
+		self.m_buttons = buttons.copy()
+		self.m_ConfirmButton = tk.Button(parent)
 
+	# Will change depending on the SQL statement structure
+	def labelElements():
+		self.m_BackButton['text'] = "<<< Previous Screen"
+
+		pass
+
+	def show():
+		self.m_BackButton.pack()
+		self.m_ConfirmButton.pack()
+		pass
+
+class TransDataEntry(dataEntryScreen):
+	def __init__(self):
+		pass
+
+class ProductDataEntry(dataEntryScreen):
+	def __init__(self):
+		pass
+
+
+# Child Classes
 class TransScreen(Screen):
 	m_Screen_ID = ScreenID.TRANSACTIONS
 
@@ -153,7 +186,7 @@ class DataView():
 
 # Class for the control panel below the dataView
 class ControlPanel():
-	m_buttons = []
+	m_buttons = [] # index order: add, edit, delete
 	m_labels = []
 
 	def __init__(self, parent):
@@ -194,6 +227,10 @@ class MainApplication(tk.Frame):
 	#
 	def switchScreen(screen_ID):
 		pass
+
+	def spawnWindow():
+		top = tk.Toplevel()
+
 
 # Entry Point
 if __name__ == '__main__':

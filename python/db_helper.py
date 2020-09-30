@@ -43,7 +43,6 @@ def execute_read_query(connection, query):
 		print(f'The error \'{e}\' occurred')
 
 
-# Will be used for adding to the database from GUI
 def select_query(connection, columns, table, condition="", raw_query=""):
 	select_query = "SELECT " + columns + " FROM " + table
 
