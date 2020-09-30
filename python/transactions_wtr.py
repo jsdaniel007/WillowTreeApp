@@ -18,6 +18,7 @@ def init_Transactions_Table(connection):
 		Count INTEGER NOT NULL,
 		Product_ID INTEGER NOT NULL,
 		Customer_Name CHAR(100),
+		Sale_Price DOUBLE NOT NULL,
 		FOREIGN KEY (Product_ID) REFERENCES Products (SKU_ID)
 	);
 	"""
