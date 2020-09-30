@@ -43,11 +43,12 @@ class ScreenID(enum.IntEnum):
 	PRODUCTS = 1
 
 # An abstract class acting as an interface for different GUI screens to derive from
-class Screen:
+class Screen(tk.Frame):
 	m_Screen_ID = ScreenID.NONE
 
 	# Initialize sent in variables
 	def __init__(self, parent, header, dataTree, controlPanel):
+		tk.Frame.__init__(self, parent)
 		self.m_Parent = parent
 		self.m_Header = header
 		self.m_DataView = dataTree
@@ -190,8 +191,13 @@ class MainApplication(tk.Frame):
 		initScreen.labelElements()
 		initScreen.show()
 
+	#
+	def switchScreen(screen_ID):
+		pass
+
 # Entry Point
 if __name__ == '__main__':
 	root = tk.Tk()
+	root.geometry('600x600')
 	MainApplication(root).pack(side='top', fill='both', expand=True)
 	root.mainloop()
