@@ -42,13 +42,13 @@ class ScreenID(enum.IntEnum):
 	TRANSACTIONS = 0
 	PRODUCTS = 1
 
+
 # An abstract class acting as an interface for different GUI screens to derive from
-class Screen(tk.Frame):
+class Screen():
 	m_Screen_ID = ScreenID.NONE
 
 	# Initialize sent in variables
 	def __init__(self, parent, header, dataTree, controlPanel):
-		tk.Frame.__init__(self, parent)
 		self.m_Parent = parent
 		self.m_Header = header
 		self.m_DataView = dataTree
@@ -75,6 +75,30 @@ class Screen(tk.Frame):
 		self.m_DataView.dTree.pack(pady=20)
 		self.m_ControlPanel.show()
 
+# screen for action button menus (eg. Add Transaction, Edit Transaction, etc.)
+class subScreen():
+	m_Screen_ID = ScreenID.NONE
+	m_Labels = []
+	m_Entry = []
+
+	# Add the frames to format the screen
+	def __init__(self, parent):
+		self.backButton = tk.Button(parent, text="<< Cancel")
+		self.formFrame = tk.LabelFrame(parent, text="Form Section")
+		self.confirmButton = tk.Button(parent)
+
+	# Add text to the labels,
+	def labelElements(self, labelArr):
+		pass
+
+	# fill m_Labels with t
+	def fillForm(self):
+		pass
+
+	def show(self):
+		self.backButton.pack(side='left')
+		self.formFrame.pack()
+		self.confirmButton.pack()
 
 class TransScreen(Screen):
 	m_Screen_ID = ScreenID.TRANSACTIONS
@@ -191,9 +215,11 @@ class MainApplication(tk.Frame):
 		initScreen.labelElements()
 		initScreen.show()
 
-	#
-	def switchScreen(screen_ID):
-		pass
+	# Creates a Screen to overlay on top of
+	def spawnScreen():
+		top = tk.Toplevel()
+		top.title('example')
+		my_label = tk.Label(top, text="label example").pack()
 
 # Entry Point
 if __name__ == '__main__':
