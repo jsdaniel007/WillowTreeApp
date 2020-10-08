@@ -16,12 +16,13 @@ class Sheet(enum.Enum):
 	TR = "Transactions"
 	PR = "Products"
 
+# Base Class for sheet interactions
 class ExcelHelper():
 	# Columns for the screen
 	m_WorkbookFile = "" # With the extension
-	m_RowCount = 0
 	m_TransactionColumns = ['Date', 'Quantity', 'Product_Name', 'Customer/UserName', 'Net_Price']
 	m_ProductColumns = ['Product_Name', 'Total_Quantity', 'Retail_Price', 'Shipping_Cost']
+
 
 	# Create a workbook for with initial settings
 	def __init__(self, workbookName):
@@ -51,7 +52,7 @@ class ExcelHelper():
 			for cell in col:
 				cell.value = columnsList[i]
 				i += 1
-				
+
 		self.m_RowCount += 1
 
 	# Add a row of {dataList} contents to {sheetName} cells, overwriting previous data
@@ -60,12 +61,13 @@ class ExcelHelper():
 
 		# Load up columns with titles
 		i = 0
-		for col in sheet.iter_cols(min_row=self.m_RowCount, max_col=len(dataList)):
+		for col in sheet.iter_cols(min_row=0, max_col=len(dataList)):
 			for cell in col:
 				cell.value = dataList[i]
 				i += 1
+		#add a row to the count
+		
 
-		self.m_RowCount += 1
 
 	# TODO: Testing needed to confirm it works, depending on row placement
 	# Add a row of {dataList} contents to {sheetName} cells, leaving matching data alone
@@ -79,9 +81,7 @@ class ExcelHelper():
 			for cell in col:
 				if not cell.value == dataList[i]:
 					cell.value = sheetName[i]
-
 				i += 1
-
 
 	def save(self):
 		self.workbookObj.save(self.m_WorkbookFile)
