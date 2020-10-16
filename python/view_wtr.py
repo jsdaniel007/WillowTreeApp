@@ -18,23 +18,6 @@ Convert new screen to a class
 Convert each major visual element into a class (titlebar, treeview, button control panel)
 """
 
-#Global Padding vars
-TITLE_PAD_Y = 10
-
-# Table Padding
-TABLE_PAD_Y = 100
-
-#
-BOTTOM_S_FRAME_Y = 50
-
-# Button Padding for individual elements
-BUTTON_PAD_Y = 30
-BUTTON_PAD_X = 50
-
-# Label Padding for individual elements
-LABEL_PAD_Y = 30
-LABEL_PAD_X = 50
-
 
 # Classes -- For every major reusable GUI element, we'll have a class for it
 class ScreenID(enum.IntEnum):
@@ -43,7 +26,6 @@ class ScreenID(enum.IntEnum):
 	TRANS_ENTRY = 1
 	PRODUCTS = 2
 	PRODUCT_ENTRY = 3
-
 
 # An abstract class acting as an interface for different GUI screens to derive from
 class Screen():
@@ -61,6 +43,8 @@ class Screen():
 		self.dataViewFrame = tk.LabelFrame(self.m_Parent, text="TreeView", pady=100)
 		self.controlPanelFrame = tk.LabelFrame(self.m_Parent, text="Control Panel")
 
+		self.labelElements()
+		self.show()
 	# Label the Header, DataTree, and Control Panel objects
 	def labelElements(self):
 		# Variables for Header, DataView, and ControlPanel
@@ -77,42 +61,7 @@ class Screen():
 		self.m_DataView.dTree.pack(pady=20)
 		self.m_ControlPanel.show()
 
-# screen for action button menus (eg. Add Transaction, Edit Transaction, etc.)
-class subScreen():
-	m_Screen_ID = ScreenID.NONE
-	m_Labels = []
-	m_Entry = []
-
-	# Add the frames to format the screen
-	def __init__(self, parent):
-		self.backButton = tk.Button(parent, text="<< Cancel")
-		self.formFrame = tk.LabelFrame(parent, text="Form Section")
-		self.confirmButton = tk.Button(parent)
-
-	# Add text to the labels,
-	def labelElements(self, labelArr):
-		pass
-
-	# fill m_Labels with t
-	def fillForm(self):
-		pass
-
-	def show(self):
-		self.backButton.pack(side='left')
-		self.formFrame.pack()
-		self.confirmButton.pack()
-
-
-class TransDataEntry(dataEntryScreen):
-	def __init__(self):
-		pass
-
-class ProductDataEntry(dataEntryScreen):
-	def __init__(self):
-		pass
-
-
-# Child Classes
+# Child Classes for Main Screens
 class TransScreen(Screen):
 	m_Screen_ID = ScreenID.TRANSACTIONS
 
@@ -148,7 +97,93 @@ class ProductScreen(Screen):
 		# Product Control Panel Text
 		ProdButtonText = ["Add Product", "Edit Product", "Remove Product"]
 		ProdLabelText = ["Add a Product to the Inventory", "Select a Product to Edit", "Remove a Product from the Inventory"]
-		self.m_ControlPanel.labelElements(TransButtonText, TransLabelText)
+		self.m_ControlPanel.labelElements(ProdButtonText, ProdLabelText)
+
+	def show(self):
+		super().show()
+
+# Base Class Screen for action button menus (eg. Add Transaction, Edit Transaction, etc.)
+class subScreen():
+	m_Screen_ID = ScreenID.NONE
+	# To be used by base classes
+	m_Entries = ["Base Class"]
+	m_LabelText = ["Base Class"]
+
+	# Add the frames to format the screen
+	def __init__(self, parent):
+		self.backButton = tk.Button(parent)
+		self.formFrame = tk.LabelFrame(parent)
+		self.confirmButton = tk.Button(parent)
+
+	# Spawns new screen over original screen for data entry
+	def spawnScreen():
+		pass
+
+	# fill self with screen elements to be loaded in a child class
+	def fillForm(self, parent, entryCount):
+		for entry in entryCount:
+			self.m_LabelText.append( tk.Label(parent, text = labels[entry]) )
+			self.m_Entries.append( tk.Entry(parent, bd = 5) )
+
+	# Add text to the GUI elements
+	def labelElements(self, pairCount, labels):
+		self.backButton['text'] = "<< Cancel"
+		self.formFrame['text'] = "Form Frame"
+		self.fillForm(self.formFrame, pairCount)
+		self.confirmButton['text'] = "Confirm"
+
+	# entries: array holding entry variables
+	# labels: list holding names for Labels
+	def show(self):
+		self.backButton.pack(side='left')
+		self.formFrame.pack()
+		for index in range(len(self.m_LabelText)):
+			self.m_LabelText[index].pack(side = "left")
+			self.m_Entries[index].pack(side = "right")
+
+		self.confirmButton.pack()
+
+# Child Classes for subScreen
+class addScreen(subScreen):
+	m_Entries = [] # fill with details
+	m_LabelText = []
+
+	def __init__(self, parent):
+		super().__init__(parent)
+		self.labelElements()
+		self.show()
+
+	def spawnScreen(self):
+		top = tk.Toplevel()
+		top.title = "Add Transaction Menu"
+
+	def fillForm(self, parent):
+		super().fillForm(parent, len(self.m_Entries))
+
+	def labelElements(self):
+		super().labelElements( len(self.m_LabelText), self.m_LabelText)
+
+	def show(self):
+		super().show()
+
+class editScreen(subScreen):
+	m_Entries = []
+	m_LabelText = []
+
+	def __init__(self, parent):
+		super().__init__(parent)
+		self.labelElements(parent)
+		self.show()
+
+	def spawnScreen(self):
+		top = tk.Toplevel()
+		top.title = "Edit Transaction Menu"
+
+	def fillForm(self, parent):
+		super().fillForm(parent, len(self.m_Entries))
+
+	def labelElements(self):
+		super().labelElements(len(self.m_LabelText), self.m_LabelText)
 
 	def show(self):
 		super().show()
@@ -199,11 +234,11 @@ class ControlPanel():
 
 	def labelElements(self, buttonTextArr, labelTextArr):
 		for buttonText in buttonTextArr:
-			self.m_buttons.append(tk.Button(self.buttonFrame, text=buttonText, pady=LABEL_PAD_Y))
+			self.m_buttons.append(tk.Button(self.buttonFrame, text=buttonText, pady=30))
 
 		# Pack the labels into the Label frame
 		for labelText in labelTextArr:
-			self.m_labels.append(tk.Label(self.labelFrame, text=labelText, pady=LABEL_PAD_Y))
+			self.m_labels.append(tk.Label(self.labelFrame, text=labelText, pady=30))
 
 	def show(self):
 		self.buttonFrame.pack(side="left", fill = tk.BOTH, expand=True)
@@ -224,18 +259,9 @@ class MainApplication(tk.Frame):
 		self.parent = parent
 
 		# Create an Initial Screen
-		initScreen = TransScreen(parent, Header(parent), DataView(parent), ControlPanel(parent))
-		initScreen.labelElements()
-		initScreen.show()
-
-	# Creates a Screen to overlay on top of
-	def spawnScreen():
-		top = tk.Toplevel()
-		top.title('example')
-		my_label = tk.Label(top, text="label example").pack()
-
-	def spawnWindow():
-		top = tk.Toplevel()
+		#initScreen = TransScreen(parent, Header(parent), DataView(parent), ControlPanel(parent))
+		#initScreen = ProductScreen(parent, Header(parent), DataView(parent), ControlPanel(parent))
+		initScreen = addScreen(parent)
 
 
 # Entry Point
