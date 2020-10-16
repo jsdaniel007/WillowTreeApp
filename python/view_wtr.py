@@ -40,7 +40,9 @@ LABEL_PAD_X = 50
 class ScreenID(enum.IntEnum):
 	NONE = sys.maxsize
 	TRANSACTIONS = 0
-	PRODUCTS = 1
+	TRANS_ENTRY = 1
+	PRODUCTS = 2
+	PRODUCT_ENTRY = 3
 
 
 # An abstract class acting as an interface for different GUI screens to derive from
@@ -100,6 +102,17 @@ class subScreen():
 		self.formFrame.pack()
 		self.confirmButton.pack()
 
+
+class TransDataEntry(dataEntryScreen):
+	def __init__(self):
+		pass
+
+class ProductDataEntry(dataEntryScreen):
+	def __init__(self):
+		pass
+
+
+# Child Classes
 class TransScreen(Screen):
 	m_Screen_ID = ScreenID.TRANSACTIONS
 
@@ -177,7 +190,7 @@ class DataView():
 
 # Class for the control panel below the dataView
 class ControlPanel():
-	m_buttons = []
+	m_buttons = [] # index order: add, edit, delete
 	m_labels = []
 
 	def __init__(self, parent):
@@ -220,6 +233,10 @@ class MainApplication(tk.Frame):
 		top = tk.Toplevel()
 		top.title('example')
 		my_label = tk.Label(top, text="label example").pack()
+
+	def spawnWindow():
+		top = tk.Toplevel()
+
 
 # Entry Point
 if __name__ == '__main__':
