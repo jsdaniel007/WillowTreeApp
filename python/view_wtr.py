@@ -7,15 +7,10 @@ import enum
 import sys
 
 # Description
-"""Branch: OOP-Refactor
+"""
 Purpose: To refactor application behavior to better model an OOP-based approach
 using https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 Bryan Oakley's top response
-
-Milestones:
-Convert Init of application -- IN PROGRESS
-Convert new screen to a class
-Convert each major visual element into a class (titlebar, treeview, button control panel)
 """
 
 
@@ -106,8 +101,9 @@ class ProductScreen(Screen):
 class subScreen():
 	m_Screen_ID = ScreenID.NONE
 	# To be used by base classes
-	m_Entries = ["Base Class"]
 	m_LabelText = ["Base Class"]
+	m_Entries = []
+	m_Labels = []
 
 	# Add the frames to format the screen
 	def __init__(self, parent):
@@ -120,33 +116,33 @@ class subScreen():
 		pass
 
 	# fill self with screen elements to be loaded in a child class
-	def fillForm(self, parent, entryCount):
-		for entry in entryCount:
-			self.m_LabelText.append( tk.Label(parent, text = labels[entry]) )
+	def fillForm(self, parent, entryCount, labels):
+		for entry in range(entryCount):
+			self.m_Labels.append( tk.Label(parent, text = labels[entry]) )
 			self.m_Entries.append( tk.Entry(parent, bd = 5) )
 
 	# Add text to the GUI elements
 	def labelElements(self, pairCount, labels):
 		self.backButton['text'] = "<< Cancel"
 		self.formFrame['text'] = "Form Frame"
-		self.fillForm(self.formFrame, pairCount)
+		self.fillForm(self.formFrame, pairCount, labels)
 		self.confirmButton['text'] = "Confirm"
 
 	# entries: array holding entry variables
 	# labels: list holding names for Labels
 	def show(self):
-		self.backButton.pack(side='left')
+		self.backButton.pack()
 		self.formFrame.pack()
 		for index in range(len(self.m_LabelText)):
-			self.m_LabelText[index].pack(side = "left")
-			self.m_Entries[index].pack(side = "right")
+			self.m_Labels[index].pack()
+			self.m_Entries[index].pack()
 
 		self.confirmButton.pack()
 
 # Child Classes for subScreen
 class addScreen(subScreen):
+	m_LabelText = ["Date", "Quantity", "Product Name", "Customer", "Sale Price", "Gross", "Shipping"  ]
 	m_Entries = [] # fill with details
-	m_LabelText = []
 
 	def __init__(self, parent):
 		super().__init__(parent)
@@ -157,8 +153,8 @@ class addScreen(subScreen):
 		top = tk.Toplevel()
 		top.title = "Add Transaction Menu"
 
-	def fillForm(self, parent):
-		super().fillForm(parent, len(self.m_Entries))
+	def fillForm(self, parent, entryCount, labels):
+		super().fillForm(parent, entryCount, labels)
 
 	def labelElements(self):
 		super().labelElements( len(self.m_LabelText), self.m_LabelText)
@@ -166,9 +162,10 @@ class addScreen(subScreen):
 	def show(self):
 		super().show()
 
+# TODO: Work functionality to allow for filling information
 class editScreen(subScreen):
+	m_LabelText = ["Date", "Quantity", "Product Name", "Customer", "Sale Price", "Gross", "Shipping"]
 	m_Entries = []
-	m_LabelText = []
 
 	def __init__(self, parent):
 		super().__init__(parent)
@@ -180,7 +177,7 @@ class editScreen(subScreen):
 		top.title = "Edit Transaction Menu"
 
 	def fillForm(self, parent):
-		super().fillForm(parent, len(self.m_Entries))
+		super().fillForm(parent, len(self.m_Entries), self.m_LabelText)
 
 	def labelElements(self):
 		super().labelElements(len(self.m_LabelText), self.m_LabelText)
