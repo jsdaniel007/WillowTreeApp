@@ -11,35 +11,25 @@ import sys
 Purpose: To refactor application behavior to better model an OOP-based approach
 using https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 Bryan Oakley's top response
+
+MainApplication Source:
+https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
 """
-
-
-# Classes -- For every major reusable GUI element, we'll have a class for it
-class ScreenID(enum.IntEnum):
-	NONE = sys.maxsize
-	TRANSACTIONS = 0
-	TRANS_ENTRY = 1
-	PRODUCTS = 2
-	PRODUCT_ENTRY = 3
 
 # An abstract class acting as an interface for different GUI screens to derive from
 class Screen():
-	m_Screen_ID = ScreenID.NONE
 
 	# Initialize sent in variables
-	def __init__(self, parent, header, dataTree, controlPanel):
+	def __init__(self, parent):
 		self.m_Parent = parent
-		self.m_Header = header
-		self.m_DataView = dataTree
-		self.m_ControlPanel = controlPanel
+		self.m_Header = Header(parent)
+		self.m_DataView = DataView(parent)
+		self.m_ControlPanel = ControlPanel(parent)
 
-		#Create frames for each objects
 		self.headerFrame = tk.LabelFrame(self.m_Parent, text="Header", pady=10)
 		self.dataViewFrame = tk.LabelFrame(self.m_Parent, text="TreeView", pady=100)
 		self.controlPanelFrame = tk.LabelFrame(self.m_Parent, text="Control Panel")
 
-		self.labelElements()
-		self.show()
 	# Label the Header, DataTree, and Control Panel objects
 	def labelElements(self):
 		# Variables for Header, DataView, and ControlPanel
@@ -58,10 +48,16 @@ class Screen():
 
 # Child Classes for Main Screens
 class TransScreen(Screen):
-	m_Screen_ID = ScreenID.TRANSACTIONS
 
-	def __init__(self, parent, header, dataTree, controlPanel):
-		super().__init__(parent, header, dataTree, controlPanel)
+	def __init__(self, parent):
+		super().__init__(parent)
+
+		# Configure buttons from the other classes
+		self.m_Header.switchButton.configure(command = lambda: productSwitch(parent))
+
+		# Show the elements for the
+		self.labelElements()
+		self.show()
 
 	def labelElements(self):
 		# Transaction Header Text
@@ -78,10 +74,16 @@ class TransScreen(Screen):
 		super().show()
 
 class ProductScreen(Screen):
-	m_Screen_ID = ScreenID.PRODUCTS
 
-	def __init__(self, parent, header, dataTree, controlPanel):
-		super().__init__(parent, header, dataTree, controlPanel)
+	def __init__(self, parent):
+		super().__init__(parent)
+
+		# Configure buttons from the other classes
+		self.m_Header.switchButton.configure(command = lambda: TransScreen.__init__(parent))
+
+		# Show the elements for the
+		self.labelElements()
+		self.show()
 
 	def labelElements(self):
 		# Product Header Text
@@ -99,7 +101,6 @@ class ProductScreen(Screen):
 
 # Base Class Screen for action button menus (eg. Add Transaction, Edit Transaction, etc.)
 class subScreen():
-	m_Screen_ID = ScreenID.NONE
 	# To be used by base classes
 	m_LabelText = ["Base Class"]
 	m_Entries = []
@@ -250,16 +251,46 @@ class ControlPanel():
 # Class to structure the main application
 # Note: args and kwargs are for accepting any number of Objects to init the app
 class MainApplication(tk.Frame):
-	# Using Instace attributes instead of class attributes
-	def __init__(self, parent, *args, **kwargs): # parent = root
-		tk.Frame.__init__(self, parent, *args, **kwargs)
+	# Using Instance attributes instead of class attributes
+	def __init__(self, parent): # parent = root
+		tk.Frame.__init__(self, parent)
 		self.parent = parent
 
-		# Create an Initial Screen
-		#initScreen = TransScreen(parent, Header(parent), DataView(parent), ControlPanel(parent))
-		#initScreen = ProductScreen(parent, Header(parent), DataView(parent), ControlPanel(parent))
-		initScreen = addScreen(parent)
+		# the container is where we'll stack a bunch of frames on top of each other,
+		# then the one we want visible will be raised above the others
+		container = tk.Frame(self)
+		container.pack(side="top", fill="both", expand=True)
+		container.grid_rowconfigure(0, weight=1)
+		container.grid_columnconfigure(0, weight=1)
 
+		self.frames = {}
+
+		for F in (TransScreen, ProductScreen, addScreen, editScreen):
+			page_name = F.__name__
+			frame = F(parent=container)
+			self.frames[page_name] = frame
+
+			frame.grid(row=0, column=0, sticky="nsew")
+		self.show_frame("TransScreen")
+
+
+		# Create an Initial Screen
+		#initScreen = TransScreen(parent)
+		#initScreen = ProductScreen(parent, Header(parent), DataView(parent), ControlPanel(parent))
+		#initScreen = addScreen(parent)
+
+		def show_frame(self, page_name):
+			#'''Show a frame for the given page name'''
+			frame = self.frames[page_name]
+			frame.tkraise()
+
+
+# Button Commands
+def productSwitch(parent):
+	screen = ProductScreen(parent)
+
+def transSwitch(parent):
+	screen = TransScreen(parent)
 
 # Entry Point
 if __name__ == '__main__':
