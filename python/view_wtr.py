@@ -256,33 +256,10 @@ class MainApplication(tk.Frame):
 		tk.Frame.__init__(self, parent)
 		self.parent = parent
 
-		# the container is where we'll stack a bunch of frames on top of each other,
-		# then the one we want visible will be raised above the others
-		container = tk.Frame(self)
-		container.pack(side="top", fill="both", expand=True)
-		container.grid_rowconfigure(0, weight=1)
-		container.grid_columnconfigure(0, weight=1)
-
-		self.frames = {}
-
-		for F in (TransScreen, ProductScreen, addScreen, editScreen):
-			page_name = F.__name__
-			frame = F(parent=container)
-			self.frames[page_name] = frame
-
-			frame.grid(row=0, column=0, sticky="nsew")
-		self.show_frame("TransScreen")
-
-
 		# Create an Initial Screen
 		#initScreen = TransScreen(parent)
 		#initScreen = ProductScreen(parent, Header(parent), DataView(parent), ControlPanel(parent))
 		#initScreen = addScreen(parent)
-
-		def show_frame(self, page_name):
-			#'''Show a frame for the given page name'''
-			frame = self.frames[page_name]
-			frame.tkraise()
 
 
 # Button Commands
