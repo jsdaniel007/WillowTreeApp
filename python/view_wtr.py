@@ -73,7 +73,7 @@ class TransScreen(Screen):
 
 		# Show the elements for the screen
 		self.labelElements()
-		self.show()
+		#self.show()
 
 	# TODO: Consolidate the Control Panel into the Base Class
 	def labelElements(self):
@@ -92,14 +92,14 @@ class TransScreen(Screen):
 
 class ProductScreen(Screen):
 	def __init__(self, parent, controller):
-		super().__init__( parent, controller)
+		super().__init__(parent, controller)
 
 		# Configure buttons from the other classes
 		self.switchButton.configure(command = lambda: controller.show_frame(TransScreen) )
 
 		# Show the elements for the
 		self.labelElements()
-		self.show()
+		#self.show()
 
 	def labelElements(self):
 		# Product Header Text
@@ -281,13 +281,14 @@ class MainApplication(tk.Tk):
 			self.frames[F] = frame
 
 			#frame.grid(row = 0, column = 0, sticky ="nsew")
-			frame.pack(anchor='center')
+			frame.pack()
 
 		self.show_frame(TransScreen)
 
 	# to display the current frame passed as parameter
 	def show_frame(self, cont):
 		frame = self.frames[cont]
+		frame.show()
 		frame.tkraise()
 
 # Entry Point
