@@ -6,6 +6,7 @@ from functools import partial
 import enum
 import sys
 
+
 # Description
 """
 Purpose: To refactor application behavior to better model an OOP-based approach
@@ -35,9 +36,9 @@ class Screen(tk.Frame):
 		# Control Panel Content
 		self.m_ControlPanel = ControlPanel(parent)
 
-		self.headerFrame = tk.LabelFrame(self.m_Parent, text="Header", pady=10)
-		self.dataViewFrame = tk.LabelFrame(self.m_Parent, text="TreeView", pady=100)
-		self.controlPanelFrame = tk.LabelFrame(self.m_Parent, text="Control Panel")
+		#self.headerFrame = tk.LabelFrame(self.m_Parent, text="Header", pady=10)
+		#self.dataViewFrame = tk.LabelFrame(self.m_Parent, text="TreeView", pady=100)
+		#self.controlPanelFrame = tk.LabelFrame(self.m_Parent, text="Control Panel")
 
 	# Label the Header, DataTree, and Control Panel objects
 	def labelElements(self, headerText, buttonText):
@@ -47,16 +48,16 @@ class Screen(tk.Frame):
 
 	def show(self):
 		# Frame packing
-		self.headerFrame.pack()
-		self.dataViewFrame.pack()
-		self.controlPanelFrame.pack()
+		#self.headerFrame.grid(row = 0)
+		#self.dataViewFrame.grid(row = 1)
+		#self.controlPanelFrame.grid(row = 2)
 
 		# Element Packing -- Header
-		self.headerTitle.pack()
-		self.switchButton.pack()
+		self.headerTitle.grid(row = 0, column = 0)
+		self.switchButton.grid(row = 1, column = 0)
 
 		#Dataview Packing
-		self.m_DataView.dTree.pack(pady=20)
+		self.m_DataView.dTree.grid(pady=20)
 		#ControlPanel Packing
 		self.m_ControlPanel.show()
 
@@ -73,7 +74,7 @@ class TransScreen(Screen):
 
 		# Show the elements for the screen
 		self.labelElements()
-		#self.show()
+		self.show()
 
 	# TODO: Consolidate the Control Panel into the Base Class
 	def labelElements(self):
@@ -99,7 +100,7 @@ class ProductScreen(Screen):
 
 		# Show the elements for the
 		self.labelElements()
-		#self.show()
+		self.show()
 
 	def labelElements(self):
 		# Product Header Text
@@ -148,13 +149,13 @@ class subScreen(tk.Frame):
 	# entries: array holding entry variables
 	# labels: list holding names for Labels
 	def show(self):
-		self.backButton.pack()
-		self.formFrame.pack()
+		self.backButton.grid(row = 0, column = 0)
+		self.formFrame.grid(row = 1, column = 0)
 		for index in range(len(self.m_LabelText)):
-			self.m_Labels[index].pack()
-			self.m_Entries[index].pack()
+			self.m_Labels[index].grid(row = index, column = 0)
+			self.m_Entries[index].grid(row = index, column = 1)
 
-		self.confirmButton.pack()
+		self.confirmButton.grid(row = len(self.m_LabelText) + 1, column = 0)
 
 # Child Classes for subScreen
 class addScreen(subScreen):
@@ -230,27 +231,30 @@ class ControlPanel():
 	m_labels = []
 
 	def __init__(self, parent):
-		self.buttonFrame = tk.LabelFrame(parent, text="ButtonFrame")
-		self.labelFrame = tk.LabelFrame(parent, text="LabelFrame")
+		#self.buttonFrame = tk.LabelFrame(parent, text="ButtonFrame")
+		#self.labelFrame = tk.LabelFrame(parent, text="LabelFrame")
+		self.m_parent = parent
+		pass
 
 	# TODO: Rework so that subscreen buttons are configured
 	def labelElements(self, buttonTextArr, labelTextArr):
 		for buttonText in buttonTextArr:
-			self.m_buttons.append(tk.Button(self.buttonFrame, text=buttonText, pady=30))
+			self.m_buttons.append(tk.Button(self.m_parent, text=buttonText, pady=30))
 
 		# Pack the labels into the Label frame
 		for labelText in labelTextArr:
-			self.m_labels.append(tk.Label(self.labelFrame, text=labelText, pady=30))
+			self.m_labels.append(tk.Label(self.m_parent, text=labelText, pady=30))
 
 	def show(self):
-		self.buttonFrame.pack(side="left", fill = tk.BOTH, expand=True)
-		self.labelFrame.pack(side="right", fill = tk.BOTH, expand=True)
+		#self.buttonFrame.grid(side="left", fill = tk.BOTH, expand=True)
+		#self.labelFrame.grid(side="right", fill = tk.BOTH, expand=True)
+		#self.buttonFrame.grid(row=0, column=0)
 
-		for button in self.m_buttons:
-			button.pack()
+		for btn in range(len(self.m_buttons)):
+			self.m_buttons[btn].grid(row = btn, column = 0)
 
-		for label in self.m_labels:
-			label.pack()
+		for lbl in range(len(self.m_labels)):
+			self.m_labels[lbl].grid(row = lbl, column = 0)
 
 # Class to structure the main application
 # Note: args and kwargs are for accepting any number of Objects to init the app
