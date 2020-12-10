@@ -24,21 +24,21 @@ class Screen(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
 
+		# Parent and Structure setup
 		self.m_Parent = parent
+		self.headerFrame = tk.LabelFrame(self.m_Parent, text="Header", pady=10)
+		self.dataViewFrame = tk.LabelFrame(self.m_Parent, text="TreeView", pady=100)
+		self.controlPanelFrame = tk.LabelFrame(self.m_Parent, text="Control Panel")
 
 		# Header Content init
-		self.headerTitle = tk.Label(parent)
-		self.switchButton = tk.Button(parent)
+		self.headerTitle = tk.Label(self.headerFrame)
+		self.switchButton = tk.Button(self.headerFrame)
 
 		# DataView Content
-		self.m_DataView = DataView(parent)
+		#self.m_DataView = DataView(self.dataViewFrame)
 
 		# Control Panel Content
-		self.m_ControlPanel = ControlPanel(parent)
-
-		#self.headerFrame = tk.LabelFrame(self.m_Parent, text="Header", pady=10)
-		#self.dataViewFrame = tk.LabelFrame(self.m_Parent, text="TreeView", pady=100)
-		#self.controlPanelFrame = tk.LabelFrame(self.m_Parent, text="Control Panel")
+		self.m_ControlPanel = ControlPanel(self.controlPanelFrame)
 
 	# Label the Header, DataTree, and Control Panel objects
 	def labelElements(self, headerText, buttonText):
@@ -48,16 +48,16 @@ class Screen(tk.Frame):
 
 	def show(self):
 		# Frame packing
-		#self.headerFrame.grid(row = 0)
-		#self.dataViewFrame.grid(row = 1)
-		#self.controlPanelFrame.grid(row = 2)
+		self.headerFrame.grid(row = 1)
+		self.dataViewFrame.grid(row = 2)
+		self.controlPanelFrame.grid(row = 3)
 
 		# Element Packing -- Header
 		self.headerTitle.grid(row = 0, column = 0)
 		self.switchButton.grid(row = 1, column = 0)
 
 		#Dataview Packing
-		self.m_DataView.dTree.grid(pady=20)
+		#self.m_DataView.dTree.grid(pady=20)
 		#ControlPanel Packing
 		self.m_ControlPanel.show()
 
@@ -73,8 +73,8 @@ class TransScreen(Screen):
 		self.switchButton.configure( command = lambda: controller.show_frame(ProductScreen) )
 
 		# Show the elements for the screen
-		self.labelElements()
-		self.show()
+		#self.labelElements()
+		#self.show()
 
 	# TODO: Consolidate the Control Panel into the Base Class
 	def labelElements(self):
@@ -99,8 +99,8 @@ class ProductScreen(Screen):
 		self.switchButton.configure(command = lambda: controller.show_frame(TransScreen) )
 
 		# Show the elements for the
-		self.labelElements()
-		self.show()
+		#self.labelElements()
+		#self.show()
 
 	def labelElements(self):
 		# Product Header Text
@@ -231,24 +231,24 @@ class ControlPanel():
 	m_labels = []
 
 	def __init__(self, parent):
-		#self.buttonFrame = tk.LabelFrame(parent, text="ButtonFrame")
-		#self.labelFrame = tk.LabelFrame(parent, text="LabelFrame")
+		self.buttonFrame = tk.LabelFrame(parent, text="ButtonFrame")
+		self.labelFrame = tk.LabelFrame(parent, text="LabelFrame")
 		self.m_parent = parent
-		pass
 
 	# TODO: Rework so that subscreen buttons are configured
 	def labelElements(self, buttonTextArr, labelTextArr):
 		for buttonText in buttonTextArr:
-			self.m_buttons.append(tk.Button(self.m_parent, text=buttonText, pady=30))
+			self.m_buttons.append(tk.Button(self.buttonFrame, text=buttonText, pady=30))
 
 		# Pack the labels into the Label frame
 		for labelText in labelTextArr:
-			self.m_labels.append(tk.Label(self.m_parent, text=labelText, pady=30))
+			self.m_labels.append(tk.Label(self.labelFrame, text=labelText, pady=30))
 
 	def show(self):
 		#self.buttonFrame.grid(side="left", fill = tk.BOTH, expand=True)
 		#self.labelFrame.grid(side="right", fill = tk.BOTH, expand=True)
-		#self.buttonFrame.grid(row=0, column=0)
+		self.buttonFrame.grid(row=0, column=0)
+		self.labelFrame.grid(row=0, column=1)
 
 		for btn in range(len(self.m_buttons)):
 			self.m_buttons[btn].grid(row = btn, column = 0)
@@ -285,14 +285,14 @@ class MainApplication(tk.Tk):
 			self.frames[F] = frame
 
 			frame.grid(row = 0, column = 0, sticky ="nsew")
-			#frame.pack()
 
 		self.show_frame(TransScreen)
 
 	# to display the current frame passed as parameter
 	def show_frame(self, cont):
 		frame = self.frames[cont]
-		#frame.show()
+		frame.labelElements()
+		frame.show()
 		frame.tkraise()
 
 # Entry Point
